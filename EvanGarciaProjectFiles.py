@@ -1,8 +1,7 @@
-
 def main():
     print("Project Files by Evan Garcia")
     displayTemparature()
-
+    
 # PART 1: displayTemparature will display the temparature's from the AtlantaTemps2017.csv file.
 def displayTemparature():
     file = open("AtlantaTemps2017.csv", "r")
@@ -23,6 +22,8 @@ def displayTemparature():
     highTemps = []
     lowTemps = []
 
+    theData = []
+
     for line in file:
         line = line.strip()
         if not line:
@@ -32,6 +33,7 @@ def displayTemparature():
         date = parts[0]
         high = int(parts[1])
         low = int(parts[2])
+        theData.append((date, high, low))
 
         highestSum += high
         lowestSum += low
@@ -83,4 +85,57 @@ def displayTemparature():
 
     print("Number of low temparature's below", lowThreshold, ":", lowCount)
     print("Number of high temparature's above", highThreshold, ":", highCount)
+    
+    displayMonthStats(theData)
+
+    # Part 2 displayMonthStats function will display the high temp, low temp, average high temp, and average low temp in each month.
+def displayMonthStats(theData):
+    monthlyData = {}
+
+    for date, high, low in theData:
+        month = int(date.split("/")[0])
+        if month not in monthlyData:
+            monthlyData[month] = []
+        monthlyData[month].append((date, high, low))
+
+    theMonths = [
+        "Janurary", "Feburary", "March",
+        "April", "May", "June", "July", "August", 
+        "September", "October", "November", 
+        "December"
+    ]
+
+    for month in range(1, 13):
+        if month not in monthlyData:
+            continue
+
+        monthlyRecords = monthlyData[month]
+        monthlyHighs = []
+        monthlyLows = []
+
+        for record in monthlyRecords:
+            date = record[0]
+            high = record[1]
+            low = record[2]
+
+            monthlyHighs.append(high)
+            monthlyLows.append(low)
+        
+        highestRecord = monthlyRecords[0]
+        lowestRecord = monthlyRecords[0]
+
+        for record in monthlyRecords:
+            if record[1] > highestRecord[1]:
+                highestRecord = record
+            if record[2] < lowestRecord[2]:
+                lowestRecord = record
+
+        averageHighTemps = sum(monthlyHighs) / len(monthlyHighs)
+        averageLowTemps = sum(monthlyLows) / len(monthlyLows)
+
+        print(month)
+        print("The highest temparature:", highestRecord[1], "occurred on", highestRecord[0])
+        print("The lowest temparature:", lowestRecord[2], "occurred on", lowestRecord[0])
+        print("Average high temparature:", round(averageHighTemps, 2))
+        print("Average low temparature:", round(averageLowTemps, 2))
 main()
